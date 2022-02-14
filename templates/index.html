@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="splash-screen">
+
+            <h1>Stir Frynd</h1>
+            <h2>Save your favorite recipes and choose based on ingredients you have at home</h2>
+
+        </div>
+
+        <div class="features">
+
+            <div class="card">
+                <i class="fa-solid fa-book-open"></i>
+                <h3 class="card-title">Save Your Favorites</h3>
+                <p class="card-blurb">upload a new recipe so you can find it later</p>
+                <a href="{{url_for('upload')}}" class="hotlink">Upload!</a>
+            </div>
+            <div class="card">
+                <i class="fa-brands fa-apple"></i>
+                <h3 class="card-title">Throw it Together</h3>
+                <p class="card-blurb">find a recipe with the ingredients in your fridge</p>
+                <a href="{{url_for('search')}}" class="hotlink">Search!</a>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-question"></i>
+                <h3 class="card-title">Get Inspired</h3>
+                <p class="card-blurb">Show a random recipe for inspiration</p>
+                <a href="{{url_for('random')}}" class="hotlink">Go!</a>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
