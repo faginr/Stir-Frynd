@@ -27,6 +27,7 @@ nav a {
 /* Index */
 
 .splash-screen {
+    font-size: 110%;
     width: 100%;
     height: 45vh;
     display: flex;
@@ -40,6 +41,8 @@ nav a {
     text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.445),
                0px 8px 13px rgba(0, 0, 0, 0.39),
                0px 18px 23px rgba(0, 0, 0, 0.411);
+    background-size: cover no-repeat;
+    background-position: top;
 }
 
 
@@ -192,4 +195,36 @@ nav a {
     display: flex;
     justify-content: center;
     align-content: center;
+}
+
+/* Show */
+
+.recipe-container {
+    margin-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.recipe {
+    width: 60vw;
+    max-width: 50rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    margin-top: 5rem;
+    padding: 1rem 0 1rem 0;
+    background-color: white;
+    box-shadow: 2px 2px 2px black;
+    border-radius: 13px;
+}
+
+.recipe p{
+    max-width: 50rem;
+    padding: 0px 1rem 0px 1rem;
 }

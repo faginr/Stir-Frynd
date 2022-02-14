@@ -1,6 +1,36 @@
 {% extends 'base.html' %} 
 
-{% block content %}
+{% block content %} 
+
+<div class="recipe-container">
+    
+<h1>Recipes</h1>
+
+{% for recipe in recipes %}
+  <div class="recipe">
+
+    <div>
+      <img src="{{recipe['img']}}" alt="" />
+    </div>
+
+    <h2>{{recipe['title']}}</h2>
+
+    {% if recipe['type'] == 0 %}
+    <p>Breakfast</p>
+    {% elif recipe['type'] == 1%}
+    <p>Lunch</p>
+    {% elif recipe['type'] == 2%}
+    <p>Dinner</p>
+    {% else %}
+    <p>Misc.</p>
+    {% endif %}
+
+    <p>{{recipe['instructions']}}</p>
+  </div>
+
+  {% endfor %} 
+</div>
+
 
 
 {% endblock %}
