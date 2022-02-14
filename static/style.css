@@ -83,6 +83,31 @@ nav a {
 
 /* Upload */
 
+.image-container{
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+}
+
+.image-container input{
+    max-width: 12rem;
+}
+
+.image-container button{
+    max-width: 6rem;
+}
+
+
+#image {
+    width: 350px;
+    height: 300px;
+    display: none;
+}
+
 .upload-title{
     margin-top: 2rem;
     display: flex;
