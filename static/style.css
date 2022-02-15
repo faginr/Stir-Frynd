@@ -137,6 +137,14 @@ nav a {
     flex-direction: column;
 }
 
+.plus {
+    color: limegreen;
+}
+
+.minus {
+    color: red;
+}
+
 .image-container {
     display: flex;
 }
@@ -181,6 +189,7 @@ nav a {
 
 .random-title {
     margin-top: 2rem;
+    margin-bottom: -4rem;
     display: flex;
     justify-content: center;
 }
@@ -194,6 +203,16 @@ nav a {
     align-content: space-around;
     align-items: center;
     justify-items: center;
+}
+
+.random-container {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: start;
+    justify-content: start;
+    margin-bottom: 1rem;
 }
 
 .random-form div {
@@ -236,4 +255,14 @@ nav a {
 .recipe p{
     max-width: 50rem;
     padding: 0px 1rem 0px 1rem;
+}
+
+/* Search */
+
+.match {
+    color: red;
+}
+
+.search-form{
+    margin-bottom: -25rem;
 }

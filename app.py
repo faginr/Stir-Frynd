@@ -28,6 +28,7 @@ def upload():
         title = request.form['title']
         type = request.form['type']
         instructions = request.form['instructions']
+        ingredient = request.form['ingredient']
         img = request.form['img']
 
         if not title:
@@ -39,17 +40,25 @@ def upload():
 
         else:
             conn = get_db_conn()
-            conn.execute('INSERT INTO recipes (title, type, instructions, img) VALUES (?,?,?,?)', (title, type, instructions,img))
+            conn.execute('INSERT INTO recipes (title, type, instructions, ingredient, img) VALUES (?,?,?,?,?)', (title, type, instructions,ingredient, img))
             conn.commit()
-            flash('Upload Successful')
             conn.close()
-            return render_template('show.html')
+            return redirect(url_for('show'))
 
     return render_template('upload.html')
 
-@app.route('/search/')
+@app.route('/search/', methods=('GET', 'POST'))
 def search():
-    return render_template('search.html')
+    if request.method == 'POST':
+        ingredient = request.form['ingredient']
+        conn = get_db_conn()
+        query = conn.execute('SELECT * FROM recipes WHERE ingredient = ?',  (ingredient,)).fetchall()
+        return render_template('search.html', query=query)
+    # ingredient = request.form['ingredient']
+    conn = get_db_conn()
+    query = conn.execute('SELECT * FROM recipes' ).fetchall()
+    return render_template('search.html', query=query)
+    
 
 @app.route('/random_recipe/', methods=('GET', 'POST'))
 def random_recipe():
@@ -87,3 +96,4 @@ def show():
 
     # conn.close()
     # return render_template('index.html', pairs=pairs)
+

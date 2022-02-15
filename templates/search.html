@@ -7,12 +7,45 @@
 </div>
 
 <div class="search-form">
-    <form action="">
+    <form action="" method="POST">
         <label for="ingredients">Ingredients:</label>
-        <input type="text" />
+        <input name="ingredient" type="text" value="{{request.form['ingredient']}}"></input>
       <div id="search-submit">
         <input type="submit" />
       </div>
     </form>
   </div>
+
+  <div class="recipe-container">
+
+{% for response in query %}
+
+<div class="recipe">
+
+    <div>
+      <img src="{{response['img']}}" alt="" />
+    </div>
+
+    <h2>{{response['title']}}</h2>
+
+    {% if response['type'] == 0 %}
+    <p>Breakfast</p>
+    {% elif response['type'] == 1%}
+    <p>Lunch</p>
+    {% elif response['type'] == 2%}
+    <p>Dinner</p>
+    {% else %}
+    <p>Misc.</p>
+    {% endif %}
+
+    <ul>
+        <li class="match">{{response['ingredient']}}</li>
+    </ul>
+    <p>{{response['instructions']}}</p>
+  </div>
+
+{% endfor %}
+
+</div>
+
 {% endblock %}

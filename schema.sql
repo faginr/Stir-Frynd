@@ -1,6 +1,7 @@
 -- Drop tables on startup if they exist; only for dev purposes, do not keep in final version
 DROP TABLE IF EXISTS recipes;
 DROP TABLE IF EXISTS ingredients;
+-- DROP TABLE IF EXISTS recipes_ingredients;
 
 -- create recipe table
 CREATE TABLE recipes (
@@ -8,6 +9,7 @@ CREATE TABLE recipes (
     title TEXT NOT NULL,
     img TEXT,
     type INTEGER NOT NULL,
+    ingredient TEXT NOT NULL,
     instructions TEXT NOT NULL
 );
 
@@ -21,3 +23,7 @@ CREATE TABLE ingredients (
     FOREIGN KEY (recipe_id) REFERENCES recipes (id)
 );
 
+-- CREATE TABLE recipes_ingredients (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+-- );

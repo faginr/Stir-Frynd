@@ -40,9 +40,9 @@
     <div id="ingredients">
         <div class="ingredient-container">
             <label name="ingredient-label" for="ingredient1">Ingredient:</label>
-            <input name="ingredient" type="text"></input>
-            <span name="plus" class="plus" onclick="addField()">+</span>
-            <span name="minus"class="minus">-</span>
+            <input name="ingredient" type="text" value="{{request.form['ingredient']}}"></input>
+            <span name="plus" class="plus" onclick="addField()"><i class="fa-solid fa-plus"></i></span>
+            <span name="minus"class="minus"><i class="fa-solid fa-minus"></i></span>
         </div>
     </div>
     <div>
