@@ -21,7 +21,7 @@
         <a href="{{url_for('index')}}">Home</a>
         <a href="{{url_for('upload')}}">Upload Recipe</a>
         <a href="{{url_for('search')}}">Search</a>
-        <a href="{{url_for('random')}}">Random</a>
+        <a href="{{url_for('random_recipe')}}">Random</a>
         <a href="{{url_for('show')}}">Recipes</a>
     </nav>
 
@@ -29,6 +29,12 @@
 
         {% block content %} {% endblock %}
 
+    </div>
+    
+    <div>
+        {% for message in get_flashed_messages() %}
+        <div class="alert">{{message}}</div>
+        {% endfor %}
     </div>
 
 </body>

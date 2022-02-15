@@ -1,0 +1,45 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+
+<div class="random-title">
+  <h1>Random Recipe</h1>
+</div>
+
+<div class="recipe-container">
+
+{% for recipe in recipes %}
+<div class="recipe">
+
+    <div>
+      <img src="{{recipe['img']}}" alt="" />
+    </div>
+
+    
+    <h2>{{recipe['title']}}</h2>
+
+    {% if recipe['type'] == 0 %}
+    <p>Breakfast</p>
+    {% elif recipe['type'] == 1%}
+    <p>Lunch</p>
+    {% elif recipe['type'] == 2%}
+    <p>Dinner</p>
+    {% else %}
+    <p>Misc.</p>
+    {% endif %}
+
+    <p>{{recipe['instructions']}}</p>
+  </div>
+  {% endfor %} 
+
+</div>
+
+<div class="random-form">
+    <form action="" method="POST">
+        <label for="random">Click to generate a random recipe:</label>
+      <div id="random-submit">
+        <button>Get Recipe</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

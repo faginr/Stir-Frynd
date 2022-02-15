@@ -132,6 +132,15 @@ nav a {
     margin-top: 2rem;
 }
 
+#ingredients {
+    display: flex;
+    flex-direction: column;
+}
+
+.image-container {
+    display: flex;
+}
+
 #upload-submit{
     display: flex;
     justify-content: center;
