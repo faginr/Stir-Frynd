@@ -1,4 +1,6 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} 
+
+{% block content %}
 
 <div class="upload-title">
   <h1>Upload New Recipe</h1>
@@ -15,18 +17,21 @@
 
 <div class="upload-form">
   <form action="" method="post">
+
     <div>
         <p>Once you are happy with the image, paste the url here:</p>
         <input type="text" name="img" value="{{request.form['img']}}"></input>
     </div>
+
     <div>
       <label for="title">Recipe Name:</label>
-      <input type="text" name="title" value="{{request.form['title']}}"></input>
+      <input type="text" name="title" value="{{request.form['title']}}" required></input>
     </div>
+
     <div>
       <label for="type">Meal Type:</label>
 
-      <input type="radio" name="type" id="breakfast" value="0"></input>
+      <input type="radio" name="type" id="breakfast" value="0" required></input>
       <label for="breakfast">Breakfast</label>
 
       <input type="radio" name="type" id="lunch" value="1"></input>
@@ -37,58 +42,40 @@
       <input type="radio" name="type" id="misc" value="3"></input>
       <label for="misc">Misc.</label>
     </div>
-    <div id="ingredients">
-        <div class="ingredient-container">
-            <label name="ingredient-label" for="ingredient1">Ingredient:</label>
-            <input name="ingredient" type="text" value="{{request.form['ingredient']}}"></input>
-            <span name="plus" class="plus" onclick="addField()"><i class="fa-solid fa-plus"></i></span>
-            <span name="minus"class="minus"><i class="fa-solid fa-minus"></i></span>
-        </div>
+
+    
+    <div id="ingredient-container">
+      <label name="ingredient-label" for="description">Ingredient:</label>
+      <input name="description" type="text" value="{{request.form['desription']}}" required></input>
+            
+      <label for="quantity-label">Qty:</label>
+      <input name="quantity" type="number" value="{{request.form['quantity']}}" required></input>
+            
+      <label name="unit-label" for="unit">Units:</label>
+      <input name="unit" type="text" value="{{request.form['unit']}}" required></input>
+    </div>
+
+    <div>
+      <label for="instructions">Instructions:</label>
     </div>
     <div>
-      <label for="description">Description:</label>
+      <textarea name="instructions" id="instructions" cols="40" rows="30" placeholder="Type recipe directions here...." required>{{request.form['instructions']}}</textarea>
     </div>
-    <div>
-      <textarea name="instructions" id="description" cols="40" rows="30" placeholder="Type recipe directions here....">{{request.form['instructions']}}</textarea
-      >
-    </div>
+    
     <div id="upload-submit">
       <button type="submit">Submit</button>
     </div>
+
   </form>
+
 </div>
 {% endblock %} 
 
 {% block javascript %}
 <script>
   let btn = document.querySelector("#image-btn");
-  let keyword = document.querySelector("#keyword");
-  let ingredients = document.querySelector("#ingredients")
-    
+  let keyword = document.querySelector("#keyword");    
 
-  function addField(){
-      let newIngredient = document.createElement("div")
-      newIngredient.classList.add("ingredient-container")
-
-      let newLabel = document.createElement("label");
-      let newInput = document.createElement("input");
-    //   let newPlus = document.createElement("span");
-    //   let newMinus = document.createElement("span");
-      newLabel.innerHTML = "Ingredient:"
-    //   newPlus.innerHTML = "+"
-    //   newMinus.innerHTML = "-"
-      
-      newIngredient.appendChild(newLabel);
-      newIngredient.appendChild(newInput);
-    //   newIngredient.appendChild(newPlus);
-    //   newIngredient.appendChild(newMinus);
-
-      document.querySelector("#ingredients").appendChild(newIngredient);
-  }
-
-//   function removeField(){
-
-//   }
 
   btn.addEventListener("click", function () {
     let word = keyword.value;

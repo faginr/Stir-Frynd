@@ -132,21 +132,9 @@ nav a {
     margin-top: 2rem;
 }
 
-#ingredients {
+#ingredient-container{
     display: flex;
     flex-direction: column;
-}
-
-.plus {
-    color: limegreen;
-}
-
-.minus {
-    color: red;
-}
-
-.image-container {
-    display: flex;
 }
 
 #upload-submit{

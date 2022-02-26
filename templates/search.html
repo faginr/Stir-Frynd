@@ -8,44 +8,56 @@
 
 <div class="search-form">
     <form action="" method="POST">
-        <label for="ingredients">Ingredients:</label>
-        <input name="ingredient" type="text" value="{{request.form['ingredient']}}"></input>
+        <label for="keyword">Ingredients:</label>
+        <input name="keyword" type="text" value="{{request.form['keyword']}}"></input>
       <div id="search-submit">
         <input type="submit" />
       </div>
     </form>
   </div>
 
-  <div class="recipe-container">
+  {% for r in recipes %}
+    {% for id in recipe_id %}
+      {% if id['recipe_id'] == r['id'] %}
+        <div class="recipe">
 
-{% for response in query %}
+        <div>
+          <img src="{{r['img']}}" alt="" />
+        </div>
 
-<div class="recipe">
+        <h2>{{r['title']}}</h2>
 
-    <div>
-      <img src="{{response['img']}}" alt="" />
-    </div>
+          {% if r['type'] == 0 %}
+            <p>Breakfast</p>
+          {% elif r['type'] == 1%}
+            <p>Lunch</p>
+          {% elif r['type'] == 2%}
+            <p>Dinner</p>
+          {% else %}
+            <p>Misc.</p>
+          {% endif %}
 
-    <h2>{{response['title']}}</h2>
-
-    {% if response['type'] == 0 %}
-    <p>Breakfast</p>
-    {% elif response['type'] == 1%}
-    <p>Lunch</p>
-    {% elif response['type'] == 2%}
-    <p>Dinner</p>
-    {% else %}
-    <p>Misc.</p>
-    {% endif %}
-
-    <ul>
-        <li class="match">{{response['ingredient']}}</li>
-    </ul>
-    <p>{{response['instructions']}}</p>
-  </div>
-
-{% endfor %}
-
+        <ul>
+          {% for item in ingredients %}
+            {% if item['recipe_id'] == r['id'] %}
+              <li>
+                <span>{{item['description']}}</span>
+                <span>:</span>
+                <span>{{item['quantity']}}</span>
+                <span> </span>
+                <span>{{item['unit']}}</span>
+          
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+        <p>{{r['instructions']}}</p>
+      {% endif %}
+      </div>
+    {% endfor %}
+  {% endfor %} 
 </div>
+
+
 
 {% endblock %}
