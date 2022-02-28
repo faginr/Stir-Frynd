@@ -2,23 +2,31 @@
 
 {% block content %}
 
+<div class="upload-background">
+
 <div class="upload-title">
   <h1>Upload New Recipe</h1>
 </div>
 
-<div class="recipe-container">
+<div class="blurb">
+  <h3>Step 3: Add recipe instructions</h3>
+</div>
+
+<div class="new-recipe-container">
     <h1>{{title}}</h1>
     {% if type == '0' %}
-    <h5>Breakfast</h5>
+    <h3>Breakfast</h3>
     {% elif type == '1'%}
-    <h5>Lunch</h5>
+    <h3>Lunch</h3>
     {% elif type == '2'%}
-    <h5>Dinner</h5>
+    <h3>Dinner</h3>
     {% else %}
-    <h5>Misc.</h5>
+    <h3>Misc.</h3>
     {% endif %}
-    <h6>Ingredients:</h6>
+    <h4>Ingredients:</h4>
     {% for ingredient in ingredients %}
+
+    
     <li>
         <span>{{ingredient[0]}}</span>
         <span>:</span>
@@ -33,6 +41,7 @@
 
 
 
+
 <div class="upload-form">
   <form action="" method="post">
 
@@ -42,14 +51,25 @@
     <div>
       <textarea name="instructions" id="instructions" cols="40" rows="30" placeholder="Type recipe directions here...." required>{{request.form['instructions']}}</textarea>
     </div>
-    
+  
+    <div class="blurb">
+      <h5>Let's find an image for your new recipe</h5>
+    </div>
+
     <div id="upload-submit">
       <button type="submit">Add Image</button>
     </div>
 
   </form>
 
-  <a href="{{url_for('upload_title')}}">Start Over</a>
+  <div class="blurb">
+    <h5>Not what you wanted? Restart at any time.</h5>
+  </div>
+  
+
+  <a class="restart-btn" href="{{url_for('upload_title')}}">Start Over</a>
+
+</div>
 
 </div>
 {% endblock %} 

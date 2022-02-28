@@ -2,8 +2,10 @@
 
 {% block content %} 
 
+<div class="recipe-background">
+
 <div class="recipe-container">
-    
+
 <h1>Recipes</h1>
 
 {% for recipe in recipes %}
@@ -47,14 +49,12 @@
     <div>
       <form action="{{url_for('delete', id=recipe['id'])}}"
       method="POST">
-      <input type="submit" value="Delete Recipe">
+      <input class="restart-btn" type="submit" value="Delete">
       </form>
     </div>
   </div>
 
   {% endfor %} 
 </div>
-
-
-
+</div>
 {% endblock %}
