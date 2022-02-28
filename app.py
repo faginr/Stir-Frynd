@@ -1,3 +1,4 @@
+from operator import ge
 from pickle import GET
 import sqlite3
 from flask import Flask, request, redirect, render_template, flash, url_for, session
@@ -65,48 +66,54 @@ def search(keyword="*"):
     conn = get_db_conn()
     if request.method == 'POST':
         keyword = request.form['keyword']
-        recipe_id = conn.execute('SELECT * FROM ingredients WHERE description=?', (keyword,)).fetchall()
-        recipes = conn.execute('SELECT * FROM recipes').fetchall()
-        ingredients = conn.execute('SELECT * FROM ingredients').fetchall()
-        # recipes = []
-        # ingredients = []
-        # for item in recipe_id:
-        #     recipe = conn.execute('SELECT * FROM recipes WHERE id=?', (recipe_id['recipe_id'],)).fetchall()
-        #     for r in recipe:
-        #         recipes.append(r)
-        #     ingredient = conn.execute('SELECT * FROM ingredients WHERE recipe_id=?', (recipe_id,)).fetchall()
-        #     for i in ingredient:
-        #         ingredients.append(i)
+        if keyword != "*":
+            # items = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.description = ? ORDER BY r.title;', (keyword,)).fetchall()
+            tag = conn.execute('SELECT i.recipe_id FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.description = ?;', (keyword,)).fetchall()
+            items = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.recipe_id = ? ORDER BY r.title;', (tag[0][0],)).fetchall()
+        else:
+            items = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions FROM ingredients i JOIN recipes r ON i.recipe_id = r.id ORDER BY r.id;').fetchall()
+        recipes = {}
+
+        key_func = lambda t:t['title']
+
+        for k,g in groupby(items, key=key_func):
+            recipes[k] = list(g)
+        conn.commit()
         conn.close()
-        return render_template('search.html', recipe_id=recipe_id, recipes=recipes, ingredients=ingredients, keyword=keyword)
+        return render_template('search.html', recipes=recipes)
     if keyword != "*":
-        recipe_id = conn.execute('SELECT * FROM ingredients WHERE description=?', (keyword,)).fetchall()
+        tag = conn.execute('SELECT i.recipe_id FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.description= ?;', (keyword,)).fetchall()
+        items = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.recipe_id = ? ORDER BY r.title;', (tag[0][0],)).fetchall()
     else:
-        recipe_id = conn.execute('SELECT * FROM ingredients').fetchall()
-    recipes = conn.execute('SELECT * FROM recipes').fetchall()
-    ingredients = conn.execute('SELECT * FROM ingredients').fetchall()
-        # recipes = conn.execute('SELECT * FROM recipes WHERE id=?', (recipe_id,)).fetchall()
-        # ingredients = conn.execute('SELECT * FROM ingredients WHERE recipe_id=?', (recipe_id,)).fetchall()
-    return render_template('search.html', recipe_id=recipe_id, recipes=recipes, ingredients=ingredients, keyword=keyword)
-    
+        items = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions FROM ingredients i JOIN recipes r ON i.recipe_id = r.id ORDER BY r.id;').fetchall()
+    recipes = {}
+
+    key_func = lambda t:t['title']
+
+    for k,g in groupby(items, key=key_func):
+        recipes[k] = list(g)
+
+
+    conn.commit()
+    conn.close()
+    return render_template('search.html', recipes=recipes)
 
 @app.route('/random_recipe/', methods=('GET', 'POST'))
 def random_recipe():
-    # random.seed()
-    # num = random.randint(0,3)
-    # conn = get_db_conn()
-    # recipe = conn.execute('SELECT id FROM recipes WHERE id = ?', [num]).fetchall()
-    # conn.close()
-    if request.method == 'POST':
-        conn = get_db_conn()
-        recipes = conn.execute('SELECT * FROM recipes ORDER BY RANDOM() LIMIT 1').fetchall()
-        conn.close()
-        return render_template('random_recipe.html', recipes=recipes)
-
     conn = get_db_conn()
+
+    if request.method == 'POST':
+        recipes = conn.execute('SELECT * FROM recipes ORDER BY RANDOM() LIMIT 1').fetchall()
+        print(recipes[0][0])
+        ingredients = conn.execute('SELECT * FROM ingredients i WHERE i.recipe_id = ?', (recipes[0][0],)).fetchall()
+        conn.close()
+        return render_template('random_recipe.html', recipes=recipes, ingredients=ingredients)
+
     recipes = conn.execute('SELECT * FROM recipes ORDER BY RANDOM() LIMIT 1').fetchall()
+    ingredients = conn.execute('SELECT * FROM ingredients i WHERE i.recipe_id = ?', (recipes[0][0],)).fetchall()
+    print(recipes[0][0])
     conn.close()
-    return render_template('random_recipe.html', recipes=recipes)
+    return render_template('random_recipe.html', recipes=recipes, ingredients=ingredients)
 
 @app.route('/recipes/')
 def recipes():
@@ -126,4 +133,11 @@ def show(id):
     return render_template('show.html', recipe=recipe, ingredients=ingredients)
 
 
-
+@app.route('/<int:id>delete', methods=('POST',))
+def delete(id):
+    conn = get_db_conn()
+    conn.execute('DELETE FROM ingredients WHERE recipe_id = ?', (id,))
+    conn.execute('DELETE FROM recipes WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('index'))

@@ -9,55 +9,71 @@
 <div class="search-form">
     <form action="" method="POST">
         <label for="keyword">Ingredients:</label>
-        <input name="keyword" type="text" value="{{request.form['keyword']}}"></input>
+        <input id="keyword" name="keyword" type="text" value="{{request.form['keyword']}}"></input>
       <div id="search-submit">
-        <input type="submit" />
+        <input class="btn" type="submit" />
       </div>
     </form>
   </div>
 
-  {% for r in recipes %}
-    {% for id in recipe_id %}
-      {% if id['recipe_id'] == r['id'] %}
+  <div class="recipe-container">
+
+  {% for recipe, items in recipes.items() %}
         <div class="recipe">
 
         <div>
-          <img src="{{r['img']}}" alt="" />
+          <img src="{{items[0][5]}}" alt="" />
         </div>
 
-        <h2>{{r['title']}}</h2>
+        <h2>{{recipe}}</h2>
 
-          {% if r['type'] == 0 %}
+          {% if items[0][6] == 0 %}
             <p>Breakfast</p>
-          {% elif r['type'] == 1%}
+          {% elif items[0][6] == 1%}
             <p>Lunch</p>
-          {% elif r['type'] == 2%}
+          {% elif items[0][6] == 2%}
             <p>Dinner</p>
           {% else %}
             <p>Misc.</p>
           {% endif %}
 
         <ul>
-          {% for item in ingredients %}
-            {% if item['recipe_id'] == r['id'] %}
-              <li>
+          {% for item in items %}
+
+              <li class="matched-ingredient">
                 <span>{{item['description']}}</span>
                 <span>:</span>
                 <span>{{item['quantity']}}</span>
                 <span> </span>
                 <span>{{item['unit']}}</span>
-          
               </li>
-            {% endif %}
+            
           {% endfor %}
         </ul>
-        <p>{{r['instructions']}}</p>
-      {% endif %}
+        <p>{{items[0][7]}}</p>
       </div>
-    {% endfor %}
   {% endfor %} 
 </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+  let btn = document.querySelector(".btn");
+  let keyword = document.querySelector("#keyword");     
+
+  btn.addEventListener("click", function () {
+    let word = keyword.value;
+    if (word !== ""){
+      document.querySelector(".matched-ingredient").classList.add("match");
+    } else {
+      document.querySelector(".matched-ingredient").classList.remove("match");
+    }
+  });
 
 
+
+</script>
 
 {% endblock %}

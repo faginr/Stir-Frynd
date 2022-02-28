@@ -29,10 +29,18 @@
     {% endif %}
 
     <ul>
-      <li>{{recipe['ingredient']}}</li>
+      {% for item in ingredients %}
+      <li>
+          <span>{{item['description']}}</span>
+          <span>:</span>
+          <span>{{item['quantity']}}</span>
+          <span> </span>
+          <span>{{item['unit']}}</span>
+      </li>
+      {% endfor %}
   </ul>
 
-    <p>{{recipe['instructions']}}</p>
+  <p>{{recipe['instructions']}}</p>
   </div>
   {% endfor %} 
 
