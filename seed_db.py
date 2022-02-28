@@ -49,6 +49,11 @@ cur.execute("INSERT INTO ingredients (description, quantity, unit, recipe_id) VA
     'cup',
     1))
 cur.execute("INSERT INTO ingredients (description, quantity, unit, recipe_id) VALUES (?,?,?,?)", (
+    'Salt',
+    1,
+    'pinch',
+    1))
+cur.execute("INSERT INTO ingredients (description, quantity, unit, recipe_id) VALUES (?,?,?,?)", (
     'Cheese',
     2,
     'slices',

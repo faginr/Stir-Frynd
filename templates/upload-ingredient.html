@@ -1,0 +1,45 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+
+<div class="upload-title">
+  <h1>Upload New Recipe</h1>
+</div>
+
+<div class="recipe-container">
+    <h1>{{title}}</h1>
+    {% if type == '0' %}
+    <h5>Breakfast</h5>
+    {% elif type == '1'%}
+    <h5>Lunch</h5>
+    {% elif type == '2'%}
+    <h5>Dinner</h5>
+    {% else %}
+    <h5>Misc.</h5>
+    {% endif %}
+</div>
+
+<div class="upload-form">
+  <form action="" method="post">
+    
+    <div id="ingredient-container">
+      <label name="ingredient-label" for="description">Ingredient:</label>
+      <input name="description" type="text" value="{{request.form['desription']}}" required></input>
+            
+      <label for="quantity-label">Qty:</label>
+      <input name="quantity" type="number" value="{{request.form['quantity']}}" required></input>
+            
+      <label name="unit-label" for="unit">Units:</label>
+      <input name="unit" type="text" value="{{request.form['unit']}}" required></input>
+    </div>
+    
+    <div id="upload-submit">
+      <button type="submit">Add Ingredient</button>
+    </div>
+
+  </form>
+
+  <a href="{{url_for('upload_title')}}">Start Over</a>
+
+</div>
+{% endblock %} 

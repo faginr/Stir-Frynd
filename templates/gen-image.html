@@ -1,0 +1,54 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+
+<div class="upload-title">
+  <h1>Upload New Recipe</h1>
+</div>
+
+<div class="recipe-container">
+    <h1>{{title}}</h1>
+    {% if type == '0' %}
+    <h5>Breakfast</h5>
+    {% elif type == '1'%}
+    <h5>Lunch</h5>
+    {% elif type == '2'%}
+    <h5>Dinner</h5>
+    {% else %}
+    <h5>Misc.</h5>
+    {% endif %}
+    <h6>Ingredients:</h6>
+    {% for ingredient in ingredients %}
+    <li>
+        <span>{{ingredient[0]}}</span>
+        <span>:</span>
+        <span>{{ingredient[1]}}</span>
+        <span> </span>
+        <span>{{ingredient[2]}}</span>
+    </li>
+
+    {% endfor %}
+    <p>{{instructions}}</p>
+
+</div>
+
+
+
+<div class="upload-form">
+  <form action="" method="post">
+
+    <div>
+        <label for="word-label">Type a keyword to generate an image:</label>
+        <input type="text" name="word" value="{{request.form['word']}}" required></input>
+    </div>
+    
+    <div id="upload-submit">
+      <button type="submit">Get Image</button>
+    </div>
+
+  </form>
+
+  <a href="{{url_for('upload_title')}}">Start Over</a>
+
+</div>
+{% endblock %} 
