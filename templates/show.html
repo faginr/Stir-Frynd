@@ -38,7 +38,11 @@
         {% endfor %}
     </ul>
 
-    <p>{{recipe['instructions']}}</p>
+    {% set words = recipe['instructions'].split('.') %}
+    {% for word in words %}
+    <p>{{word}} </p>
+    {% endfor %}
+
   </div>
 
 </div>

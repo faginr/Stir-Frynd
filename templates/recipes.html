@@ -43,13 +43,15 @@
       {% endfor %}
   </ul>
 
-    <p>{{recipe['instructions']}}</p>
-  
+    {% set words = recipe['instructions'].split('.') %}
+    {% for word in words %}
+    <p>{{word}} </p>
+    {% endfor %}
 
     <div>
       <form action="{{url_for('delete', id=recipe['id'])}}"
       method="POST">
-      <input class="restart-btn" type="submit" value="Delete">
+      <input class="delete-btn" type="submit" value="Delete">
       </form>
     </div>
   </div>

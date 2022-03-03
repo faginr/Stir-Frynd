@@ -52,7 +52,12 @@
             
           {% endfor %}
         </ul>
-        <p>{{items[0][7]}}</p>
+
+        {% set words = items[0][7].split('.') %}
+        {% for word in words %}
+        <p>{{word}} </p>
+        {% endfor %}
+
       </div>
   {% endfor %} 
 </div>
