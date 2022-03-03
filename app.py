@@ -194,7 +194,7 @@ def search(keyword="*"):
                 recipes[k] = list(g)
         conn.commit()
         conn.close()
-        return render_template('search.html', recipes=recipes)
+        return render_template('search.html', recipes=recipes, keyword=keyword)
     
     if keyword != "*":
         tag = conn.execute('SELECT i.recipe_id FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.description = ?;', (keyword,)).fetchall()
@@ -219,7 +219,7 @@ def search(keyword="*"):
 
     conn.commit()
     conn.close()
-    return render_template('search.html', recipes=recipes)
+    return render_template('search.html', recipes=recipes, keyword=keyword)
 
 # Random Recipe Route
 @app.route('/random_recipe/', methods=('GET', 'POST'))

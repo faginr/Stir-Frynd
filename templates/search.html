@@ -16,6 +16,9 @@
         <input class="btn" type="submit" />
       </div>
     </form>
+    {% if keyword != "*" %}
+    <h4>Search results for: '{{keyword}}'</h4>
+  {% endif %}
   </div>
 
   <div class="recipe-container">
@@ -64,24 +67,4 @@
 </div>
 
 </div>
-{% endblock %}
-
-{% block javascript %}
-<script>
-  let btn = document.querySelector(".btn");
-  let keyword = document.querySelector("#keyword");     
-
-  btn.addEventListener("click", function () {
-    let word = keyword.value;
-    if (word !== ""){
-      document.querySelector(".matched-ingredient").classList.add("match");
-    } else {
-      document.querySelector(".matched-ingredient").classList.remove("match");
-    }
-  });
-
-
-
-</script>
-
 {% endblock %}
