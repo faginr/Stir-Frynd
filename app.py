@@ -20,7 +20,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '931349940'
 
 
-
 #### ROUTES ####
 
 # Index route
@@ -54,6 +53,7 @@ def upload_ingredient():
     if request.method == 'POST':
         conn = get_db_conn()
 
+        # Save uploadable content to local session storage
         session["ingredients"] = []
         session["ingredient"] = []
         session["ingredient"].append(request.form['description'])
@@ -64,7 +64,9 @@ def upload_ingredient():
         conn.close()
         return redirect(url_for('upload_add_ingredient'))
     
-    return render_template('upload-ingredient.html', title=session["title"], type=session["type"])
+    return render_template('upload-ingredient.html', 
+    title=session["title"], 
+    type=session["type"])
 
 # Upload additional ingredients
 @app.route('/upload-add-ingredient/', methods=('GET','POST'))
@@ -78,10 +80,14 @@ def upload_add_ingredient():
         session["ingredient"].append(request.form['quantity'])
         session["ingredient"].append(request.form['unit'])
         session["ingredients"].append(session["ingredient"])
+
         conn.close()
         return redirect(url_for('upload_add_ingredient'))
     
-    return render_template('upload-add-ingredient.html', title=session["title"], type=session["type"], ingredients=session["ingredients"])
+    return render_template('upload-add-ingredient.html',
+     title=session["title"], 
+     type=session["type"], 
+     ingredients=session["ingredients"])
 
 # Upload instructions
 @app.route('/upload-instructions/', methods=('GET','POST'))
@@ -95,7 +101,10 @@ def upload_instructions():
         
         return redirect(url_for('gen_image'))
     
-    return render_template('upload-instructions.html', title=session["title"], type=session["type"], ingredients=session["ingredients"])
+    return render_template('upload-instructions.html', 
+    title=session["title"], 
+    type=session["type"], 
+    ingredients=session["ingredients"])
 
 # Get Image, write keyword/read web scraped url
 @app.route('/gen-image/', methods=('GET','POST'))
@@ -128,7 +137,11 @@ def gen_image():
         return redirect(url_for('show_image'))
 
 
-    return render_template('gen-image.html', title=session["title"], type=session["type"], ingredients=session["ingredients"], instructions=session["instructions"])
+    return render_template('gen-image.html', 
+    title=session["title"], 
+    type=session["type"], 
+    ingredients=session["ingredients"], 
+    instructions=session["instructions"])
 
 # Show image, route to database submission
 @app.route('/show-image/', methods=('GET','POST'))
@@ -139,22 +152,28 @@ def show_image():
         return redirect(url_for('upload'))
     
 
-    return render_template('show-image.html', title=session["title"], type=session["type"], ingredients=session["ingredients"], instructions=session["instructions"], url=session["url"], )
+    return render_template('show-image.html', 
+    title=session["title"], 
+    type=session["type"], 
+    ingredients=session["ingredients"], 
+    instructions=session["instructions"], 
+    url=session["url"], )
 
 # Upload, insert new record(s) to database
 @app.route('/upload/')
 def upload():
-    print(session["title"])
     conn = get_db_conn()
 
     # Insert data into recipes table
-    conn.execute('INSERT INTO recipes (title, type, instructions, img) VALUES (?,?,?,?)', (session["title"], session["type"], session["instructions"],session["url"]))
+    conn.execute('INSERT INTO recipes (title, type, instructions, img) VALUES (?,?,?,?)', 
+    (session["title"], session["type"], session["instructions"],session["url"]))
     conn.commit()
 
     # For each ingredient, insert into ingredients table and associate with recipe
     recipe_id = conn.execute('SELECT id FROM recipes WHERE title = (?)', (session["title"], )).fetchone()['id']
     for ingredient in (session["ingredients"]):
-        conn.execute('INSERT INTO ingredients (description, quantity, unit, recipe_id) VALUES (?,?,?,?)', (ingredient[0],ingredient[1],ingredient[2],recipe_id))
+        conn.execute('INSERT INTO ingredients (description, quantity, unit, recipe_id) VALUES (?,?,?,?)', 
+        (ingredient[0],ingredient[1],ingredient[2],recipe_id))
 
     conn.commit()
     conn.close()
@@ -169,18 +188,36 @@ def search(keyword="*"):
         # Get query keyword from user, or else display everything
         keyword = request.form['keyword']
         if keyword != "*":
+
             # Use keyword to get recipe ids that contain keyword
-            tag = conn.execute('SELECT i.recipe_id FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.description = ?;', (keyword,)).fetchall()
-            items = []
+            tag = conn.execute('SELECT i.recipe_id \
+                FROM ingredients i \
+                JOIN recipes r \
+                ON i.recipe_id = r.id \
+                WHERE i.description = ?;', 
+            (keyword,)).fetchall()
+            
             # Grab all ingredients associated with recipes containing keyword
-            for r in range(len(tag)):
-                for i in range(len(tag[0])):
-                    item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.recipe_id = ? ORDER BY r.title;', (tag[r][i],)).fetchall()
+            items = []
+            for row in range(len(tag)):
+                for cell in range(len(tag[0])):
+                    item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions \
+                        FROM ingredients i \
+                        JOIN recipes r \
+                        ON i.recipe_id = r.id \
+                        WHERE i.recipe_id = ? \
+                        ORDER BY r.title;', 
+                    (tag[row][cell],)).fetchall()
                     items.append(item)
+
         # Otherwise, Grab everything
         else:
             items = []
-            item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions FROM ingredients i JOIN recipes r ON i.recipe_id = r.id ORDER BY r.id;').fetchall()
+            item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions \
+                FROM ingredients i \
+                JOIN recipes r \
+                ON i.recipe_id = r.id \
+                ORDER BY r.id;').fetchall()
             items.append(item)
 
         # Map attributes to recipes using itertools
@@ -190,31 +227,48 @@ def search(keyword="*"):
 
         # groupby -> Map attributes to recipe titles
         for item in items:
-            for k,g in groupby(item, key=key_func):
-                recipes[k] = list(g)
+            for recipe_key,recipe_group in groupby(item, key=key_func):
+                recipes[recipe_key] = list(recipe_group)
         conn.commit()
         conn.close()
-        return render_template('search.html', recipes=recipes, keyword=keyword)
+        return render_template('search.html', keyword=keyword, recipes=recipes)
     
     if keyword != "*":
-        tag = conn.execute('SELECT i.recipe_id FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.description = ?;', (keyword,)).fetchall()
+        tag = conn.execute('SELECT i.recipe_id \
+            FROM ingredients i \
+            JOIN recipes r \
+            ON i.recipe_id = r.id \
+            WHERE i.description = ?;', 
+            (keyword,)).fetchall()
+
         items = []
-        for r in range(len(tag)):
-            for i in range(len(tag[0])):
-                item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions FROM ingredients i JOIN recipes r ON i.recipe_id = r.id WHERE i.recipe_id = ? ORDER BY r.title;', (tag[r][i],)).fetchall()
+        for row in range(len(tag)):
+            for cell in range(len(tag[0])):
+                item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions \
+                FROM ingredients i \
+                JOIN recipes r \
+                ON i.recipe_id = r.id \
+                WHERE i.recipe_id = ? \
+                ORDER BY r.title;', (tag[row][cell],)).fetchall()
                 items.append(item)
+
+    # When nothing has been searched, default SQL search for all data using *
     else:
         items = []
-        item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions FROM ingredients i JOIN recipes r ON i.recipe_id = r.id ORDER BY r.id;').fetchall()
+        item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions \
+        FROM ingredients i \
+        JOIN recipes r \
+        ON i.recipe_id = r.id \
+        ORDER BY r.id;').fetchall()
         items.append(item)
+        
     recipes = {}
 
     key_func = lambda t:t['title']
 
     for item in items:
-        for k,g in groupby(item, key=key_func):
-            recipes[k] = list(g)
-            print(recipes[k], list(g))
+        for recipe_key,recipe_group in groupby(item, key=key_func):
+            recipes[recipe_key] = list(recipe_group)
 
 
     conn.commit()
@@ -227,18 +281,23 @@ def random_recipe():
     conn = get_db_conn()
 
     if request.method == 'POST':
+
         # Grab a random recipe from all existant recipes
         recipes = conn.execute('SELECT * FROM recipes ORDER BY RANDOM() LIMIT 1').fetchall()
+
         # Get all related ingredients
-        ingredients = conn.execute('SELECT * FROM ingredients i WHERE i.recipe_id = ?', (recipes[0][0],)).fetchall()
+        ingredients = conn.execute('SELECT * FROM ingredients i WHERE i.recipe_id = ?', 
+        (recipes[0][0],)).fetchall()
         conn.close()
-        return render_template('random_recipe.html', recipes=recipes, ingredients=ingredients)
+
+        return render_template('random_recipe.html', 
+        recipes=recipes, ingredients=ingredients)
 
     # Grab a random recipe from all existant recipes
     recipes = conn.execute('SELECT * FROM recipes ORDER BY RANDOM() LIMIT 1').fetchall()
+
     # Get all related ingredients
     ingredients = conn.execute('SELECT * FROM ingredients i WHERE i.recipe_id = ?', (recipes[0][0],)).fetchall()
-    print(recipes[0][0])
     conn.close()
     return render_template('random_recipe.html', recipes=recipes, ingredients=ingredients)
 
@@ -246,6 +305,8 @@ def random_recipe():
 @app.route('/recipes/')
 def recipes():
     conn = get_db_conn()
+
+    # Show all recipes in database
     recipes = conn.execute('SELECT * FROM recipes').fetchall()
     ingredients = conn.execute('SELECT * FROM ingredients').fetchall()
     conn.close()
@@ -254,11 +315,14 @@ def recipes():
 
 # Show Route, show one recipe based on id
 @app.route('/<int:id>/show')
+
 # route takes an id from a recipe
 def show(id):
     conn = get_db_conn()
+
     # Get recipe that matches primary key id
     recipe = conn.execute('SELECT title, img, type, instructions FROM recipes WHERE id = ?', (id,)).fetchone()
+
     # Get related ingredients
     ingredients = conn.execute('SELECT * FROM ingredients i WHERE i.recipe_id = ?', (id,)).fetchall()
     conn.close()
@@ -266,14 +330,18 @@ def show(id):
 
 # Delete Route
 @app.route('/<int:id>delete', methods=('POST',))
+
 # route takes an id from a recipe
 def delete(id):
     conn = get_db_conn()
+
     # First delete ingredients linked to recipe
     conn.execute('DELETE FROM ingredients WHERE recipe_id = ?', (id,))
+
     # Last delete recipe
     conn.execute('DELETE FROM recipes WHERE id = ?', (id,))
     conn.commit()
     conn.close()
+
     # Redirect back to recipes route
     return redirect(url_for('recipes'))

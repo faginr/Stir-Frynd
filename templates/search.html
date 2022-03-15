@@ -16,6 +16,8 @@
         <input class="btn" type="submit" />
       </div>
     </form>
+
+    <!-- Display keyword from POST request -->
     {% if keyword != "*" %}
     <h4>Search results for: '{{keyword}}'</h4>
   {% endif %}
@@ -23,6 +25,7 @@
 
   <div class="recipe-container">
 
+    <!-- Display query results: -->
   {% for recipe, items in recipes.items() %}
         <div class="recipe">
 
@@ -56,6 +59,7 @@
           {% endfor %}
         </ul>
 
+        <!-- Instructions output, each '.' creates a new line -->
         {% set words = items[0][7].split('.') %}
         {% for word in words %}
         <p>{{word}} </p>

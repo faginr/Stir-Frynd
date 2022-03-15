@@ -5,7 +5,7 @@
 <div class="upload-background">
 
 <div class="recipe-container">
-    
+
 <h1>{{recipe['title']}}</h1>
 
   <div class="recipe">
@@ -38,6 +38,7 @@
         {% endfor %}
     </ul>
 
+    <!-- Instructions output, each '.' creates a new line -->
     {% set words = recipe['instructions'].split('.') %}
     {% for word in words %}
     <p>{{word}} </p>

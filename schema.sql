@@ -1,4 +1,4 @@
--- Drop tables on startup if they exist; only for dev purposes, do not keep in final version
+-- Drop tables on startup if they exist
 DROP TABLE IF EXISTS recipes;
 DROP TABLE IF EXISTS ingredients;
 
@@ -11,7 +11,7 @@ CREATE TABLE recipes (
     instructions TEXT NOT NULL
 );
 
--- create ingredient table, for now each ingredient only goes to one recipe
+-- create ingredient table
 CREATE TABLE ingredients (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     recipe_id INTEGER NOT NULL,

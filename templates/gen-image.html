@@ -8,13 +8,13 @@
     <h1>Upload New Recipe</h1>
   </div>
 
-
   <div class="blurb">
     <h3>Step 4: Add recipe image</h3>
   </div>
-  
+
   <div class="new-recipe-container">
       <h1>{{title}}</h1>
+
       {% if type == '0' %}
       <h3>Breakfast</h3>
       {% elif type == '1'%}
@@ -27,7 +27,6 @@
       <h4>Ingredients:</h4>
       {% for ingredient in ingredients %}
   
-      
       <li>
           <span>{{ingredient[0]}}</span>
           <span>:</span>
@@ -42,7 +41,6 @@
       <p>{{instructions}}</p>
   
   </div>
-
 
 <div class="upload-form">
   <form action="" method="post">
@@ -62,7 +60,6 @@
     <h5>Not what you wanted? Restart at any time.</h5>
   </div>
   
-
   <a class="restart-btn" href="{{url_for('upload_title')}}">Start Over</a>
 
 </div>
