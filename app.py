@@ -4,14 +4,58 @@ from itertools import groupby
 import time
 import os
 
-# get connected to database.db and create rows
+
+def get_ingredients_by_recipe(conn,keyword):
+    '''Takes a connection to database and keyword and returns items matching keyword'''
+    
+    # Use keyword to get recipe ids that contain keyword
+    tag = conn.execute('SELECT i.recipe_id \
+        FROM ingredients i \
+        JOIN recipes r \
+        ON i.recipe_id = r.id \
+        WHERE i.description = ?;', 
+        (keyword,)).fetchall()
+    
+    # Grab all ingredients associated with recipes containing keyword
+    items = []
+    for row in range(len(tag)):
+        for cell in range(len(tag[0])):
+            item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions \
+                FROM ingredients i \
+                JOIN recipes r \
+                ON i.recipe_id = r.id \
+                WHERE i.recipe_id = ? \
+                ORDER BY r.title;', 
+                (tag[row][cell],)).fetchall()
+            items.append(item)
+
+    return items
+
+def group_recipe_data(items):
+    '''Takes database items and maps them to recipes for html output'''
+    
+    # Map attributes to recipes using itertools
+    recipes = {}
+
+    key_func = lambda t:t['title']
+
+    # groupby -> Map attributes to recipe titles
+    for item in items:
+        for recipe_key,recipe_group in groupby(item, key=key_func):
+            recipes[recipe_key] = list(recipe_group)
+
+    return recipes
+
 def get_db_conn():
+    '''Gets a connection to database.db and creates rows'''
+
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-# Read web scraped url from external file
 def get_url(file_path):
+    '''Read web scraped url from extenal file'''
+
     with open(file_path, 'r') as url_file:
         return url_file.read()
 
@@ -183,6 +227,7 @@ def upload():
 @app.route('/search/', methods=('GET', 'POST'))
 def search(keyword="*"):
     conn = get_db_conn()
+    
     if request.method == 'POST':
 
         # Get query keyword from user, or else display everything
@@ -190,25 +235,7 @@ def search(keyword="*"):
         if keyword != "*":
 
             # Use keyword to get recipe ids that contain keyword
-            tag = conn.execute('SELECT i.recipe_id \
-                FROM ingredients i \
-                JOIN recipes r \
-                ON i.recipe_id = r.id \
-                WHERE i.description = ?;', 
-            (keyword,)).fetchall()
-            
-            # Grab all ingredients associated with recipes containing keyword
-            items = []
-            for row in range(len(tag)):
-                for cell in range(len(tag[0])):
-                    item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions \
-                        FROM ingredients i \
-                        JOIN recipes r \
-                        ON i.recipe_id = r.id \
-                        WHERE i.recipe_id = ? \
-                        ORDER BY r.title;', 
-                    (tag[row][cell],)).fetchall()
-                    items.append(item)
+            items = get_ingredients_by_recipe(conn,keyword)
 
         # Otherwise, Grab everything
         else:
@@ -220,37 +247,16 @@ def search(keyword="*"):
                 ORDER BY r.id;').fetchall()
             items.append(item)
 
-        # Map attributes to recipes using itertools
-        recipes = {}
+        recipes = group_recipe_data(items)
 
-        key_func = lambda t:t['title']
-
-        # groupby -> Map attributes to recipe titles
-        for item in items:
-            for recipe_key,recipe_group in groupby(item, key=key_func):
-                recipes[recipe_key] = list(recipe_group)
         conn.commit()
         conn.close()
         return render_template('search.html', keyword=keyword, recipes=recipes)
     
     if keyword != "*":
-        tag = conn.execute('SELECT i.recipe_id \
-            FROM ingredients i \
-            JOIN recipes r \
-            ON i.recipe_id = r.id \
-            WHERE i.description = ?;', 
-            (keyword,)).fetchall()
 
-        items = []
-        for row in range(len(tag)):
-            for cell in range(len(tag[0])):
-                item = conn.execute('SELECT i.id, i.description, i.quantity, i.unit, r.title, r.img, r.type, r.instructions \
-                FROM ingredients i \
-                JOIN recipes r \
-                ON i.recipe_id = r.id \
-                WHERE i.recipe_id = ? \
-                ORDER BY r.title;', (tag[row][cell],)).fetchall()
-                items.append(item)
+        # Use keyword to get recipe ids that contain keyword
+        items = get_ingredients_by_recipe(conn,keyword)
 
     # When nothing has been searched, default SQL search for all data using *
     else:
@@ -261,15 +267,8 @@ def search(keyword="*"):
         ON i.recipe_id = r.id \
         ORDER BY r.id;').fetchall()
         items.append(item)
-        
-    recipes = {}
 
-    key_func = lambda t:t['title']
-
-    for item in items:
-        for recipe_key,recipe_group in groupby(item, key=key_func):
-            recipes[recipe_key] = list(recipe_group)
-
+    recipes = group_recipe_data(items)
 
     conn.commit()
     conn.close()
